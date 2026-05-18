@@ -106,6 +106,19 @@ def _write_vite_tailwind_config(target):
     return True
 
 
+def _remove_git(target):
+    """프로젝트 생성 후 자동으로 생성되는 중첩된 .git 폴더를 삭제합니다."""
+    import shutil
+    git_dir = os.path.join(target, ".git")
+    if os.path.exists(git_dir):
+        try:
+            shutil.rmtree(git_dir)
+            _log("중첩된 .git 저장소 자동 제거 완료 (Git 충돌 방지)", "ok")
+        except Exception as e:
+            _log(f".git 폴더 제거 실패: {e}", "warn")
+    return True
+
+
 TEMPLATES = {
     "vite-react": {
         "label": "⚡ Vite + React + TypeScript + Tailwind v4",
@@ -127,7 +140,7 @@ TEMPLATES = {
         "label": "🚀 Astro + Tailwind (정적·콘텐츠 사이트)",
         "needs": ["node", "npm"],
         "scaffold": lambda name, parent: [
-            ("scaffold", f"npm create astro@latest {name} -- --template minimal --typescript strict --install --git --yes", parent, True),
+            ("scaffold", f"npm create astro@latest {name} -- --template minimal --typescript strict --install --no-git --yes", parent, True),
             ("tailwind", f"npx astro add tailwind --yes", os.path.join(parent, name), False),
         ],
         "post": "Astro + Tailwind",
@@ -257,6 +270,7 @@ def main():
             sys.exit(1)
     else:
         steps = spec["scaffold"](name, out_dir)
+        steps.append(("remove-git", _remove_git, target, False))
         warnings = []
         for step in steps:
             # 4-tuple 형식: (label, cmd_or_func, cwd, critical)
