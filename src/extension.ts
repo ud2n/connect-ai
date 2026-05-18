@@ -1083,12 +1083,7 @@ function updateCompanyMetrics(updates: any) {
 }
 
 function _extractCompanyName(idMd: string): string {
-  const m = idMd.match(/회사\s*이름\s*[:：]\s*(.+)/);
-  if (!m || !m[1]) return '';
-  let v = m[1].trim().replace(/\*+/g, '').replace(/^_+|_+$/g, '').trim();
-  if (!v) return '';
-  if (/\(여기에|\(아직 미설정|\(미설정|미설정$|^_자가학습/.test(v)) return '';
-  return v;
+  return _extractField(idMd, '회사 이름');
 }
 
 function isCompanyConfigured(): boolean {
