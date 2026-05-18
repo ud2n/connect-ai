@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Connect AI auto-generated
 .DS_Store
 .obsidian/
@@ -9,6 +10,8 @@ node_modules/
 .cache/
 Thumbs.db
 =======
+=======
+>>>>>>> origin/main
 node_modules/
 out/
 *.vsix
@@ -18,4 +21,7 @@ preview.html
 releases/
 .env
 *.bak.*
+<<<<<<< HEAD
+>>>>>>> origin/main
+=======
 >>>>>>> origin/main
