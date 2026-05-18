@@ -42,3 +42,4 @@ _CEO 에이전트만 읽고 쓰는 개인 노트. 학습·교훈·자주 쓰는 
 - [2026-05-18] 채널은 만들었고, 채널 맞춤설명란에 설명 뭐라고 써야 하나 → 보고서 sessions/2026-05-18T07-35/_report.md
 - [2026-05-18] 동기화 실패 이유 분석 → 보고서 sessions/2026-05-18T09-03/_report.md
 - [2026-05-18] 어떤 키가 미설정이라는 뜻이냐 → 보고서 sessions/2026-05-18T09-09/_report.md
+- [2026-05-18] {   "scene_timeline": [     {       "time_window": "00:00 - 00:03",       "video_prompt": "A fat, fluffy cat dressed in an ancient Greek philosopher's toga, sitting on a marble stone in ancient Athens, sighing and slowly lowering a magnifying glass while looking at the camera. Pixar animation style,

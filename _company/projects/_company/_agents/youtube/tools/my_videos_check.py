@@ -12,6 +12,12 @@ from collections import Counter
 # v2.89.49 — DeprecationWarning(utcnow 등) 노이즈 제거. 사용자 채팅창 출력에 끼면 못생김.
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
+import io
+if hasattr(sys.stdout, 'buffer'):
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+if hasattr(sys.stderr, 'buffer'):
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ACCOUNT = os.path.join(HERE, "youtube_account.json")
 CONFIG  = os.path.join(HERE, "my_videos_check.json")
@@ -197,8 +203,27 @@ def main():
         vids = [(it["id"]["videoId"], it["snippet"]["title"], it["snippet"]["publishedAt"])
                 for it in sr.get("items", [])]
     if not vids:
-        # v2.89.55 — 빈 영상 시 stderr로. stdout이 비어 있어야 TS shortcut이 실패로 정확히 처리.
-        print(f"⚠️  업로드된 영상이 없어요.", file=sys.stderr)
+        sub_str = "비공개" if subs_hidden else f"{_fmt_num(sub_count)}명"
+        L = []
+        L.append(f"# 🎬 {ch_title}")
+        L.append(f"_{time.strftime('%Y-%m-%d %H:%M')} · 채널 분석_")
+        L.append("")
+        L.append(f"> **{sub_str}** 구독자 · **{_fmt_num(view_count_total)}** 누적 조회 · **{video_count_total:,}개** 영상" + (f" · **{age_years:.1f}년** 운영" if age_years > 0 else ""))
+        L.append(f"> 핸들 `{custom_url or handle or '-'}`" + (f" · 🌍 {country}" if country else "") + f" · 영상당 평균 **{_fmt_num(avg_views_per_video_alltime)}** 조회")
+        L.append("")
+        L.append("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        L.append("")
+        L.append("## 📊 분석 결과")
+        L.append("")
+        L.append("⚠️ **업로드된 영상이 없거나 최근 영상이 없습니다.** 영상을 업로드한 후 다시 분석해주세요.")
+        L.append("")
+        summary = chr(10).join(L)
+        print(summary)
+        with open(REPORT, "a", encoding="utf-8") as f:
+            f.write(chr(10) + chr(10) + summary + chr(10) + chr(10) + "---" + chr(10))
+        print(f"\n✅ 보고서 저장: {REPORT}", file=sys.stderr)
+        tg_text = f"📊 {ch_title} — 채널 분석\n\n업로드된 영상이 없습니다. 영상을 업로드한 후 다시 분석해주세요."
+        _push_telegram(acct, tg_text)
         sys.exit(0)
 
     # === 3. 영상 상세 통계 ===
