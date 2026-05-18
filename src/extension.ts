@@ -8017,7 +8017,10 @@ export function activate(context: vscode.ExtensionContext) {
             if (req.method === 'GET' && req.url === '/ping') {
                 const brainDir = _getBrainDir();
                 const brainCount = fs.existsSync(brainDir) ? provider._findBrainFiles(brainDir).length : 0;
-                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.writeHead(200, { 
+                    'Content-Type': 'application/json',
+                    'Connection': 'close' 
+                });
                 /* v2.89.127 — 신원·버전 정보 추가. 다른 Connect AI 인스턴스가 충돌 시
                    이 응답 보고 "우리 거다 → 조용히 공유 모드 / 옛 버전이면 자동 인계" 판단. */
                 res.end(JSON.stringify({
