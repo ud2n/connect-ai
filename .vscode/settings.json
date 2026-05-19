@@ -1,4 +1,15 @@
 {
     "git.ignoreLimitWarning": true,
-    "connectAiLab.localBrainPath": "d:\\ud2n"
+    "connectAiLab.localBrainPath": "d:\\ud2n",
+    "files.watcherExclude": {
+        "**/node_modules/**": true,
+        "**/assets/**": true,
+        "**/_company/projects/assets/**": true,
+        "**/.git/**": true
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/assets": true,
+        "**/_company/projects/assets": true
+    }
 }

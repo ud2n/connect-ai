@@ -1379,18 +1379,19 @@ function _classifyModel(modelId: string): ModelTier[] {
   return tiers;
 }
 function _autoOrchestrateModelMap(installed: { id: string; backend: string }[]): Record<string, string> {
-  if (installed.length === 0) return {};
+  const chatModels = installed.filter(m => !/embed|embedding|rerank|bge-/i.test(m.id));
+  if (chatModels.length === 0) return {};
   /* v2.89.36 — 메모리 안전 필터. 사용자 머신이 못 돌리는 큰 모델은 후보에서 제외.
      이전엔 16GB Mac에 70B 모델 할당해서 LM Studio가 죽었음. */
   const specs = getSystemSpecs();
-  const safeInstalled = installed.filter(m => {
+  const safeInstalled = chatModels.filter(m => {
     const need = estimateModelMemoryGB(m.id);
     return need <= specs.safeModelBudgetGB;
   });
   /* 안전 필터로 다 잘려나가면 제일 작은 1개라도 남기기 (그래야 사용자가 일단 돌릴 수 있음) */
   const candidates = safeInstalled.length > 0 ? safeInstalled : (
-    installed.length > 0
-      ? [installed.slice().sort((a, b) => estimateModelMemoryGB(a.id) - estimateModelMemoryGB(b.id))[0]]
+    chatModels.length > 0
+      ? [chatModels.slice().sort((a, b) => estimateModelMemoryGB(a.id) - estimateModelMemoryGB(b.id))[0]]
       : []
   );
   /* 모델별 tier 분류 + 우선순위 정렬 */
@@ -1468,7 +1469,7 @@ async function listInstalledModels(): Promise<{ id: string; backend: 'ollama' | 
     await queryOllama();
     if (out.length === 0) await queryLMStudio();
   }
-  return out;
+  return out.filter(m => !/embed|embedding|rerank|bge-/i.test(m.id));
 }
 
 /* v2.89.14 / v2.89.39 — 회사 이름 동적 치환. 프롬프트 상수에 \`{{COMPANY}}\` 플레이스홀더를
